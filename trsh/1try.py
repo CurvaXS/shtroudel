@@ -1,4 +1,4 @@
-from my_sel import webdriver
+from trsh.my_sel import webdriver
 from multiprocessing import Pool
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
