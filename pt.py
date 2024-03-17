@@ -10,7 +10,6 @@ import subprocess
 
 """
 """
-#temporary_number_of_sessions = 0
 #chrome_driver = input("Введите путь на драйвер хрома (абсолютаная ссылка): ")
 serv = webdriver.ChromeService(executable_path=r'.\chromedriver.exe') 
 opt1 = Options()
@@ -32,25 +31,25 @@ driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
 
 
 def single(i, proxy):
-    opt1.add_argument(f"--proxy-server=65.109.152.88:8888")
-    opt1.add_argument('--ignore-certificate-errors-spki-list')
+    opt1.add_argument(f"--proxy-server={proxy}")
     opt1.add_experimental_option('debuggerAddress', f'localhost:100{i}')
-    driver.get('https://2ip.ru/')
+    driver.get('https://drgn4r.casino/bonus')
     time.sleep(9999)
+    
  
 
-def multi(session_quantity):
+def multi(session_quantity, proxies):
     k=session_quantity
     for j in range(session_quantity):
         for i in range(k):
-            #opt1.add_argument(f"--proxy-server:{rand_proxy}")
+            rand_proxy = random.choice(proxies)
+            opt1.add_argument(f"--proxy-server:{rand_proxy}")
             opt1.add_experimental_option('debuggerAddress', f'localhost:100{i}')
             print(f'localhost:100{i}')
         
         driver = webdriver.Chrome(service=serv, options=opt1)
         driver.get("https://drgn4r.casino/bonus")
         k -= 1
-    time.sleep(1)
 
 def input_code(code, session_quantity):
     k=session_quantity
@@ -78,7 +77,7 @@ def input_code(code, session_quantity):
         print(iframe)
         
         driver.switch_to.frame(iframe)
-        print('PIZDEC')
+        print('pivo')
         recapt = driver.find_element(By.XPATH, '//span[@id="recaptcha-anchor"]')
         recapt.click()
         print(recapt)
@@ -87,7 +86,6 @@ def input_code(code, session_quantity):
         k -= 1
 
     #time.sleep(1)
-
 
 def path_to_chromeprofiles():
     print("Если у вас windows 10 - Введите 10")
@@ -111,12 +109,16 @@ def path_to_chromeprofiles():
     num_instances = int(kol)
     #кол-во окон (рекомедн. 1-10):
     for i in range(num_instances):
-        link = fr"{fff}{i}"
+        link = fr"{fff}\profile_{i}"
         subprocess.Popen([chrome_path, f"--remote-debugging-port=100{i}", f"--user-data-dir={link}"])
-            # Add a delay to ensure each instance has time to start
         time.sleep(1)
 
 def main():
+    proxies = []
+    with open("proxies.txt", 'r') as file:
+        for line in file:
+            proxy = line.strip()  # Убираем пробельные символы и символ переноса строки
+            proxies.append(proxy)
     print('')
     print("Создание сессий - create_s")
     print("Использование существующих - load_s")
@@ -139,7 +141,7 @@ def main():
 
         elif (ver == "M" or ver == "m"):
             quantity = int(input("Введите кол-во сессий: "))
-            multi(quantity)
+            multi(quantity, proxies)
 
     elif (variable == "code_s"):
         tp = int(input("Введите кол-во сессий: "))
